@@ -11,16 +11,21 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - name: Manual approval
-        id: manual-approval
-        uses: mikeal/prompt-action@v2
-        with:
-          prompt: "Do you approve this deployment?"
-        env:
-          APPROVED: ${{ github.event.inputs.approved }}
+      # Request manual approval
+      - name: Request manual approval
+        uses: github-script/script-action@v6
+        script: |
+          gh issue create --title "Request manual approval for deployment" --body "Please approve this deployment to the main branch." --assignees @approver1, @approver2
+
+      # Wait for manual approval
+      - name: Wait for manual approval
+        uses: actions/github-script@v6
+        if: ${{ github.event.inputs.approved }}
+        script: |
+          gh issue wait-for-review --issue-number ${{ github.event.issue.number }}
 
       - name: Deploy code
-        if: steps.manual-approval.outputs.response == 'true'
         run: make deploy
+
