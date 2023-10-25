@@ -15,10 +15,10 @@ jobs:
 
       # Request manual approval
       - name: Request manual approval
-        needs: [Wait for manual approval]
+        # needs: [Wait for manual approval]
         uses: github-script/script-action@v6
-        script: |
-          gh issue create --title "Request manual approval for deployment" --body "Please approve this deployment to the main branch." --assignees @ferdinandbracho
+        # script: |
+        #   gh issue create --title "Request manual approval for deployment" --body "Please approve this deployment to the main branch." --assignees @ferdinandbracho
 
       # Wait for manual approval
       - name: Wait for manual approval
