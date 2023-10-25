@@ -1,0 +1,24 @@
+name: My workflow
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Manual approval
+        uses: github-script/script-action@v6
+        if: ${{ github.event.inputs.approved }}
+        script: |
+          echo "Manual approval granted"
+
+      - name: Deploy code
+        needs: [manual-approval]
+        run: make deploy
