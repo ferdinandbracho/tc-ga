@@ -11,14 +11,16 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
 
       - name: Manual approval
-        uses: github-script/script-action@v6
-        if: ${{ github.event.inputs.approved }}
-        script: |
-          echo "Manual approval granted"
+        id: manual-approval
+        uses: mikeal/prompt-action@v2
+        with:
+          prompt: "Do you approve this deployment?"
+        env:
+          APPROVED: ${{ github.event.inputs.approved }}
 
       - name: Deploy code
-        needs: [manual-approval]
+        if: steps.manual-approval.outputs.response == 'true'
         run: make deploy
